@@ -2,6 +2,9 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import authRoutes from './routes/authRoutes.js';
+import listingRoutes from './routes/listingRoutes.js';
+import { errorHandler } from './middleware/errorHandler.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -24,6 +27,9 @@ app.get('/api/health', (_req, res) => {
   });
 });
 
+app.use('/api/auth', authRoutes);
+app.use('/api/listings', listingRoutes);
+
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -31,13 +37,7 @@ app.use((req, res) => {
   });
 });
 
-app.use((err, _req, res, _next) => {
-  const status = err.statusCode || 500;
-  res.status(status).json({
-    success: false,
-    message: err.message || 'Internal server error',
-  });
-});
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server listening on http://localhost:${PORT}`);
