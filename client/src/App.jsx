@@ -1,14 +1,34 @@
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import { ToastProvider } from './context/ToastContext';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+import HomePage from './pages/HomePage';
+import ListingsPage from './pages/ListingsPage';
+import ListingDetailPage from './pages/ListingDetailPage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+
 export default function App() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-stone-50 p-6">
-      <div className="max-w-lg rounded-2xl bg-white p-8 shadow-sm border border-stone-200 text-center">
-        <h1 className="text-2xl font-bold text-stone-900">
-          Smart Local Tourism Business Portal
-        </h1>
-        <p className="mt-2 text-stone-600">
-          Phase 1 monorepo initialization verified.
-        </p>
-      </div>
-    </div>
+    <BrowserRouter>
+      <ToastProvider>
+        <AuthProvider>
+          <div className="flex min-h-screen flex-col bg-stone-50 text-stone-900">
+            <Navbar />
+            <main className="flex-1">
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/listings" element={<ListingsPage />} />
+                <Route path="/listings/:id" element={<ListingDetailPage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+              </Routes>
+            </main>
+            <Footer />
+          </div>
+        </AuthProvider>
+      </ToastProvider>
+    </BrowserRouter>
   );
 }
