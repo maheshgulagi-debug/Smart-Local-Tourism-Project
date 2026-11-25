@@ -1,0 +1,95 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int       @id @default(autoincrement())
+  name         String
+  email        String    @unique
+  passwordHash String
+  role         String    @default("tourist") // tourist | provider | admin
+  phone        String?
+  createdAt    DateTime  @default(now())
+
+  listings     Listing[]
+  bookings     Booking[]
+  reviews      Review[]
+
+  @@index([role])
+}
+
+model Listing {
+  id          Int       @id @default(autoincrement())
+  providerId  Int
+  title       String
+  description String
+  category    String    // Homestay | Guide | Cultural Business | Experience
+  location    String
+  price       Float
+  priceUnit   String    @default("per_night") // per_night | per_day | per_person | per_session
+  images      String    // JSON array of image URLs
+  amenities   String    // JSON array of amenities or languages
+  status      String    @default("pending") // pending | approved | rejected
+  avgRating   Float     @default(0)
+  createdAt   DateTime  @default(now())
+
+  provider    User      @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  bookings    Booking[]
+  reviews     Review[]
+
+  @@index([providerId])
+  @@index([category])
+  @@index([location])
+  @@index([status])
+}
+
+model Booking {
+  id         Int      @id @default(autoincrement())
+  listingId  Int
+  touristId  Int
+  startDate  DateTime
+  endDate    DateTime
+  guests     Int
+  totalPrice Float
+  status     String   @default("pending") // pending | confirmed | rejected | cancelled | completed
+  createdAt  DateTime @default(now())
+
+  listing    Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  tourist    User     @relation(fields: [touristId], references: [id], onDelete: Cascade)
+  review     Review?
+
+  @@index([listingId])
+  @@index([touristId])
+  @@index([status])
+  @@index([listingId, startDate, endDate])
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  listingId Int
+  touristId Int
+  bookingId Int      @unique
+  rating    Int
+  comment   String
+  createdAt DateTime @default(now())
+
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  tourist   User     @relation(fields: [touristId], references: [id], onDelete: Cascade)
+  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@index([listingId])
+  @@index([touristId])
+}
+
+model ContactMessage {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+}
