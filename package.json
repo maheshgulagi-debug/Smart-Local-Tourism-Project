@@ -1,0 +1,16 @@
+{
+  "name": "smart-local-tourism-portal",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Smart Local Tourism Business Portal monorepo",
+  "scripts": {
+    "install:all": "npm install && cd server && npm install && cd ../client && npm install",
+    "dev": "concurrently -n SERVER,CLIENT -c blue,green \"npm --prefix server run dev\" \"npm --prefix client run dev\"",
+    "build": "npm --prefix client run build",
+    "seed": "npm --prefix server run seed",
+    "migrate": "npm --prefix server run migrate"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}
