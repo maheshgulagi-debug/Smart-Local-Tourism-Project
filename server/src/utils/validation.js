@@ -63,3 +63,50 @@ export const listingCreateSchema = z.object({
 });
 
 export const listingUpdateSchema = listingCreateSchema.partial();
+
+export const createBookingSchema = z.object({
+  listingId: z.coerce.number().int().positive('Invalid listing ID'),
+  startDate: z.string().trim().min(1, 'Start date is required'),
+  endDate: z.string().trim().min(1, 'End date is required'),
+  guests: z.coerce
+    .number()
+    .int('Guests must be a whole number')
+    .min(1, 'At least 1 guest is required')
+    .max(20, 'Maximum 20 guests per booking'),
+});
+
+export const bookingStatusSchema = z.object({
+  status: z.enum(['confirmed', 'rejected', 'completed']),
+});
+
+export const createReviewSchema = z.object({
+  bookingId: z.coerce.number().int().positive('Invalid booking ID'),
+  rating: z.coerce
+    .number()
+    .int()
+    .min(1, 'Rating must be between 1 and 5')
+    .max(5, 'Rating must be between 1 and 5'),
+  comment: z
+    .string()
+    .trim()
+    .min(5, 'Review comment must be at least 5 characters')
+    .max(1000, 'Review comment cannot exceed 1000 characters'),
+});
+
+export const adminApprovalSchema = z.object({
+  status: z.enum(['approved', 'rejected']).optional().default('approved'),
+});
+
+export const adminUserRoleSchema = z.object({
+  role: z.enum(['tourist', 'provider', 'admin']),
+});
+
+export const contactSchema = z.object({
+  name: z.string().trim().min(2, 'Name must be at least 2 characters').max(80),
+  email: z.string().trim().email('Please provide a valid email address'),
+  message: z
+    .string()
+    .trim()
+    .min(10, 'Message must be at least 10 characters')
+    .max(2000, 'Message cannot exceed 2000 characters'),
+});

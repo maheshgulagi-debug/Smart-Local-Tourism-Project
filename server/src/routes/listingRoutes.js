@@ -6,11 +6,13 @@ import {
   updateListing,
   deleteListing,
 } from '../controllers/listingController.js';
+import { getListingReviews } from '../controllers/reviewController.js';
 import { authenticate, authorize, optionalAuth } from '../middleware/auth.js';
 
 const router = Router();
 
 router.get('/', getListings);
+router.get('/:id/reviews', getListingReviews);
 router.get('/:id', optionalAuth, getListingById);
 router.post('/', authenticate, authorize('provider', 'admin'), createListing);
 router.put('/:id', authenticate, authorize('provider', 'admin'), updateListing);
